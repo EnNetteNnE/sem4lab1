@@ -9,7 +9,6 @@ CORS(app)
 USER_FILE = 'users.txt'
 CIPHER_FILE = 'ciphers.txt'
 
-# Функция для проверки логина и пароля
 def check_credentials(username, password):
     if not os.path.exists(USER_FILE):
         return False
@@ -21,19 +20,16 @@ def check_credentials(username, password):
                 return True
     return False
 
-# Функция для получения шифров
 def get_ciphers():
     if not os.path.exists(CIPHER_FILE):
         return []
     with open(CIPHER_FILE, 'r') as file:
         return [line.strip().split(',') for line in file]
-
-# Функция для добавления нового шифра
+        
 def add_cipher(cipher_name, description):
     with open(CIPHER_FILE, 'a') as file:
         file.write(f"{cipher_name},{description}\n")
 
-# Функция для удаления шифра
 def delete_cipher(cipher_name):
     if not os.path.exists(CIPHER_FILE):
         return
@@ -44,7 +40,6 @@ def delete_cipher(cipher_name):
             if cipher[0] != cipher_name:
                 file.write(f"{cipher[0]},{cipher[1]}\n")
 
-# Роут для входа
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -55,12 +50,10 @@ def login():
     else:
         return jsonify({"status": "failure"}), 401
 
-# Роут для получения шифров
 @app.route('/ciphers', methods=['GET'])
 def ciphers():
     return jsonify(get_ciphers()), 200
 
-# Роут для добавления шифра
 @app.route('/ciphers', methods=['POST'])
 def add_new_cipher():
     data = request.get_json()
@@ -69,7 +62,6 @@ def add_new_cipher():
     add_cipher(cipher_name, description)
     return jsonify({"status": "success"}), 201
 
-# Роут для добавления описания
 @app.route('/ciphers', methods=['PUT'])
 def add_description():
     data = request.get_json()
@@ -79,7 +71,6 @@ def add_description():
     add_cipher(cipher_name, description)
     return jsonify({"status": "success"}), 201
 
-# Роут для удаления шифра
 @app.route('/ciphers', methods=['DELETE'])
 def remove_cipher():
     data = request.get_json()
@@ -87,7 +78,6 @@ def remove_cipher():
     delete_cipher(cipher_name)
     return jsonify({"status": "deleted"}), 200
 
-# Роут для получения описания шифра
 @app.route('/cipher/<cipher_name>', methods=['GET'])
 def get_cipher_description(cipher_name):
     ciphers = get_ciphers()
